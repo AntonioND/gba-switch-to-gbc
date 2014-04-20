@@ -3,8 +3,8 @@
 
 ; CPU_GBC_mode
 
-0000018C E3A0C301 mov     r12,#0x4000000
-00000190 E3A02004 mov     r2,#0x4          ; r2 = 0x4 | r12 = 0x04000000
+0000018C E3A0C301 mov     r12,#0x4000000   ; r12 = 0x04000000
+00000190 E3A02004 mov     r2,#0x4          ; r2 = 0x4
 00000194 E5CC2001 strb    r2,[r12,#0x1]    ; DISPCNT(15:8) = 0x4
 00000198 E3A02008 mov     r2,#0x8          ; r2 = 0x8
 0000019C E5CC2000 strb    r2,[r12]         ; DISPCNT(7:0) = 0x8 -> Video mode 0, GBC mode enabled, BG2 enabled
