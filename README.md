@@ -27,3 +27,9 @@ Needs devkitPro. Compiled with:
 
 - devkitARM: Version 42
 - libgba: Version 20090222
+
+My blog:
+
+[http://antoniond_blog.drunkencoders.com/](http://antoniond_blog.drunkencoders.com/)
+
+[http://antoniond.drunkencoders.com/](http://antoniond.drunkencoders.com/)
