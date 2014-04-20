@@ -7,6 +7,7 @@ I dissasembled the GBA BIOS and looked for the instruction that checks DISPCNT b
 
 Tested on GB Micro. Should work in GBA, GBA SP, GB Micro, but NOT in DS (If I remember correctly, the ARM7 is different, GBA mode in DS is just a compatibility mode).
 
-Uses devkitPro:
--devkitARM: Version 42
--libgba: Version20090222
+Needs devkitPro. Compiled with:
+
+- devkitARM: Version 42
+- libgba: Version20090222
