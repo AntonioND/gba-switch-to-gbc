@@ -9,6 +9,12 @@ It can even modify some other registers to change the GBC screen! It can apply a
 
 Tested on GB Micro. Should work in GBA, GBA SP, GB Micro, but NOT in DS (If I remember correctly, the ARM7 is different, GBA mode in DS is just a compatibility mode).
 
+The results are:
+- GBA: White square screen for a moment, then black screen. Boot ROM sound still sounds.
+- GBA SP: The same as GBA.
+- GB Micro: Correct boot ROM animation, with sound. Nintendo logo is white (GBC CPU reads 0s?).
+- DS: Doesn't work at all. Black screen. I suppose it hangs in the infinite loop at the end of the code.
+
 Needs devkitPro. Compiled with:
 
 - devkitARM: Version 42
