@@ -85,7 +85,7 @@ void switch2gbc(void)
 	// It is strange, when pressing L to stretch the screen, it seems that BG2 affine transformation is ignored.
 	// When pressing R again, the affine transformation is applied again.
 	
-	if(keys&KEY_LEFT)
+	if(keys&KEY_DOWN)
 	{
 		REG_BG2PA = 0x0180; // Change screen size and shape
 		REG_BG2PB = 0x0010;
@@ -96,7 +96,7 @@ void switch2gbc(void)
 		//REG_BG2PB = 0x0010;
 	}
 	
-	if(keys&KEY_L)
+	if(keys&KEY_RIGHT)
 	{
 		REG_BG2CNT |= BIT(6); // mosaic
 		REG_MOSAIC = 0x0011;
