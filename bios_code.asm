@@ -8,7 +8,8 @@
 00000194 E5CC2001 strb    r2,[r12,#0x1]    ; DISPCNT(15:8) = 0x4
 00000198 E3A02008 mov     r2,#0x8          ; r2 = 0x8
 0000019C E5CC2000 strb    r2,[r12]         ; DISPCNT(7:0) = 0x8 -> Video mode 0, GBC mode enabled, BG2 enabled
-; Code now falls to WAIT VBL. It seems that GBC mode begins when HALTCNT is written.
+; Code now falls to HALT_CPU. It seems that GBC mode begins when HALTCNT is written, like STOP instruction of GBC CPU
+; when changing CPU speeds.
 
 ; HALT_CPU
 
