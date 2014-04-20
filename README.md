@@ -26,4 +26,4 @@ A video:
 Needs devkitPro. Compiled with:
 
 - devkitARM: Version 42
-- libgba: Version20090222
+- libgba: Version 20090222
