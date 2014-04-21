@@ -19,6 +19,8 @@ The results are:
 - GB Micro: Correct boot ROM animation, with sound. Nintendo logo is white (GBC CPU reads 0s?).
 - DS: Doesn't work at all. Black screen. I suppose it hangs in the infinite loop at the end of the code.
 
+It seems that the GB Micro in GBC mode can't read anything from the cart. I have to do more tests, but I've tried a cartridge that runs at 3.3V and the GB Micro doesn't load garbage in the Nintendo logo like the real GBC or MGB.
+
 A video:
 
 [https://www.youtube.com/watch?v=-SkR8SAdS9w](https://www.youtube.com/watch?v=-SkR8SAdS9w)
