@@ -45,3 +45,30 @@ Needs devkitPro. Compiled with:
 - libgba: Version 20090222
 
 My website: www.skylyrac.net/
+
+GBATEK information
+------------------
+
+Taken from here: https://problemkaputt.de/gbatek.htm#auxgbagamepakbus
+
+    8bit-Gamepak-Switch (GBA, GBA SP only) (not DS)
+
+    A small switch is located inside of the cartridge slot, the switch is pushed
+    down when an 8bit cartridge is inserted, it is released when a GBA cartridge
+    is inserted (or if no cartridge is inserted).
+
+    The switch mechanically controls whether VDD3 or VDD5 are output at VDD35;
+    ie. in GBA mode 3V power supply/signals are used for the cartridge slot and
+    link port, while in 8bit mode 5V are used.
+
+    The switch additionally drags IN35 to 3V when an 8bit cart is inserted, the
+    current state of IN35 can be determined in GBA mode via Port 4000204h
+    (WAITCNT), if the switch is pushed, then CGB mode can be activated via Port
+    4000000h (DISPCNT.3), this bit can be set ONLY by opcodes in BIOS region
+    (eg. via CpuSet SWI function).
+
+    In 8bit mode, the cartridge bus works much like for GBA SRAM, however, the
+    8bit /CS signal is expected at Pin 5, while GBA SRAM /CS2 at Pin 30 is
+    interpreted as /RESET signal by the 8bit MBC chip (if any). In practice,
+    this appears to result in 00h being received as data when attempting to
+    read-out 8bit cartridges from inside of GBA mode.
