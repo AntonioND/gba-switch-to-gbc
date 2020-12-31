@@ -13,6 +13,7 @@
 #define E_MOSAIC                    (1 << 3)
 #define E_ROTATE_SCREEN             (1 << 4)
 
+IWRAM_CODE void prepare_registers(void);
 IWRAM_CODE void delayed_switch2gbc(void);
 
 #endif // SWITCH2GBC__

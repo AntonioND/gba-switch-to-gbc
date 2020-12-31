@@ -31,13 +31,6 @@ ALWAYS_INLINE void SWI_CpuSet(const void *src, void *dst, uint32_t len_mode)
 
 // BSS is by default in IWRAM
 uint16_t GBC_DISPCNT_VALUE;
-uint16_t EFFECTS;
-
-#define E_GREENSWAP                 (1 << 0)
-#define E_MOVE_SCREEN               (1 << 1)
-#define E_DISTORT_SCREEN            (1 << 2)
-#define E_MOSAIC                    (1 << 3)
-#define E_ROTATE_SCREEN             (1 << 4)
 
 IWRAM_CODE void prepare_registers(void)
 {
@@ -77,26 +70,11 @@ IWRAM_CODE void prepare_registers(void)
     REG_KEYCNT = 0;
 
     //REG_WAITCNT = ???
-}
-
-IWRAM_CODE void switch2gbc(void)
-{
-    REG_IME = 0;
-
-    prepare_registers();
-
-    // -----------------------------------------------------------------------------
 
     // Do BIOS configuration...
 
-    //REG_IME = 0;
-    //REG_IE = 1;
-    //REG_IF = 0x0C63;
-
-    //REG_DISPSTAT = 8;
-
     int i;
-    for(i = 0; i < 0x18000/4; i ++) // Fill VRAM with 0xFF
+    for (i = 0; i < 0x18000 / 4; i ++) // Fill VRAM with 0xFF
         ((u32*)VRAM)[i] = 0xFFFFFFFF;
 
     BG_PALETTE[0] = 0x0000;
@@ -108,59 +86,11 @@ IWRAM_CODE void switch2gbc(void)
 
     REG_SOUNDCNT_H = 0x88C2;
     REG_SOUNDBIAS = 0xC200; // 6 bit, 262.144kHz
+}
 
-    //-----------------------------------------------------------------------------
-
-    // Extra: Things that actually work!!! :D
-
-    if (EFFECTS & E_GREENSWAP)
-    {
-        *((u16*)0x04000002) = 1; // GREENSWAP
-    }
-
-    if (EFFECTS & E_MOVE_SCREEN)
-    {
-        REG_BG2X = 0xFFFFF000; // -16.0
-        REG_BG2Y = 0xFFFFFC00; // -4.0 - Change screen position
-    }
-
-    // It is strange, when pressing L to stretch the screen, it seems that BG2 affine transformation is ignored.
-    // When pressing R again, the affine transformation is applied again.
-
-    if (EFFECTS & E_DISTORT_SCREEN)
-    {
-        REG_BG2PA = 0x0180; // Change screen size and shape
-        REG_BG2PB = 0x0010;
-        REG_BG2PC = 0x0020;
-        REG_BG2PD = 0x0080;
-
-        //REG_BG3PA = 0x0080; // Change screen size - Does nothing, even when stretching screen
-        //REG_BG2PB = 0x0010;
-    }
-
-    if (EFFECTS & E_MOSAIC)
-    {
-        REG_BG2CNT |= BIT(6); // mosaic
-        REG_MOSAIC = 0x0011;
-    }
-
-    if (EFFECTS & E_ROTATE_SCREEN)
-    {
-        // Rotate 90º :P
-        REG_BG2X = 0 << 8;
-        REG_BG2Y = 160 << 8;
-
-        REG_BG2PA = 0x0000;
-        REG_BG2PB = 0x0100;
-        REG_BG2PC = 0xFF00;
-        REG_BG2PD = 0x0000;
-    }
-
-    //REG_BG3CNT = 0x4180; // NOT TESTED
-
-
-    // Enter GBC mode
-    // --------------
+IWRAM_CODE void switch2gbc(void)
+{
+    REG_IME = 0;
 
     // Write 0x0408 to DISPCNT = 0x0408: Mode 0, GBC mode enabled, BG2 enabled
     GBC_DISPCNT_VALUE = 0x0408;
@@ -178,11 +108,12 @@ IWRAM_CODE void switch2gbc(void)
 
 IWRAM_CODE void delayed_switch2gbc(void)
 {
-    irqEnable(IRQ_TIMER0);
-
+    consoleDemoInit();
     iprintf("Swap cartridges now!\n");
     iprintf("\n");
-    iprintf("Waiting 5 seconds...\n");
+    iprintf("Waiting 10 seconds...\n");
+
+    irqEnable(IRQ_TIMER0);
 
     // Clocks per second = 16777216 = 16 * 1024 * 1024
     // With 1024 prescaler = 16 * 1024 for one second
@@ -192,10 +123,11 @@ IWRAM_CODE void delayed_switch2gbc(void)
     REG_TM0CNT_L = UINT16_MAX - ticks_per_second;
     REG_TM0CNT_H = TIMER_START | TIMER_IRQ | 3;
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 10; i++)
         SWI_Halt();
 
-    REG_IME = 0;
+    BG_PALETTE[0] = 0x0000;
+    BG_PALETTE[1] = 0x7FFF;
 
     switch2gbc();
 }
