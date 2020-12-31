@@ -1,23 +1,6 @@
-
-/*
-    gba-switch-to-gbc - A demo to switch a GBA into GBC mode by software.
-    Copyright (C) 2014 Antonio Niño Díaz (AntonioND)
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-    Email: antonio_nd@outlook.com
-*/
+// SPDX-License-Identifier: MIT
+//
+// Copyright (c) 2014, 2020 Antonio Niño Díaz (AntonioND)
 
 #include <stdio.h>
 
@@ -215,53 +198,4 @@ IWRAM_CODE void delayed_switch2gbc(void)
     REG_IME = 0;
 
     switch2gbc();
-}
-
-int main(void)
-{
-    irqInit();
-    irqEnable(IRQ_VBLANK);
-
-    consoleDemoInit();
-
-    while(1)
-    {
-        VBlankIntrWait();
-
-        iprintf("\x1b[0;0H");
-
-        iprintf("Press A to continue\n");
-        iprintf("\n");
-        iprintf("B: GREENSWAP: %d\n", (EFFECTS & E_GREENSWAP) != 0);
-        iprintf("UP: Move screen: %d\n", (EFFECTS & E_MOVE_SCREEN) != 0);
-        iprintf("RIGHT: Distort screen: %d\n", (EFFECTS & E_DISTORT_SCREEN) != 0);
-        iprintf("DOWN: Mosaic: %d\n", (EFFECTS & E_MOSAIC) != 0);
-        iprintf("LEFT: Rotate screen: %d\n", (EFFECTS & E_ROTATE_SCREEN) != 0);
-
-        scanKeys();
-
-        uint16_t keys = keysDown();
-
-        if (keys & KEY_B)
-            EFFECTS ^= E_GREENSWAP;
-        if (keys & KEY_UP)
-            EFFECTS ^= E_MOVE_SCREEN;
-        if (keys & KEY_RIGHT)
-            EFFECTS ^= E_DISTORT_SCREEN;
-        if (keys & KEY_DOWN)
-            EFFECTS ^= E_MOSAIC;
-        if (keys & KEY_LEFT)
-            EFFECTS ^= E_ROTATE_SCREEN;
-
-        if (keys & KEY_A)
-            break;
-    }
-
-    irqDisable(IRQ_VBLANK);
-
-    iprintf("\n");
-
-    delayed_switch2gbc();
-
-    return 0;
 }
