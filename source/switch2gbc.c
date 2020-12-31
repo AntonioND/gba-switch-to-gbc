@@ -210,13 +210,7 @@ IWRAM_CODE void delayed_switch2gbc(void)
     REG_TM0CNT_H = TIMER_START | TIMER_IRQ | 3;
 
     for (int i = 0; i < 5; i++)
-    {
         SWI_Halt();
-        iprintf(".");
-    }
-
-    iprintf("\n");
-    iprintf("Starting switch to GBC mode...\n");
 
     REG_IME = 0;
 
