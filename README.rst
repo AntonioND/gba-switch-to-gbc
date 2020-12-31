@@ -14,8 +14,13 @@ fade in, but there is some information about the registers configuration needed
 to switch to GBC mode.
 
 It can even modify some other registers to change the GBC screen! It can apply
-an affine transformation, or apply mossaic effect... :P There are some things to
+an affine transformation, or apply mossaic effect... There are some things to
 test in the code.
+
+Note that, as soon as a GBC cartridge is inserted in the GBA, EWRAM can't be
+used. This means the function that switches to GBC mode (and any function that
+is used to wait before switching) need to be placed in IWRAM, as well as any
+variable used by the functions.
 
 Tested on GB Micro. Should work in GBA, GBA SP, GB Micro, but NOT in DS (If I
 remember correctly, the ARM7 is different, GBA mode in DS is just a
@@ -23,26 +28,19 @@ compatibility mode).
 
 The results are:
 
-- GBA: White square screen for a moment, then black screen. Boot ROM sound still
-  sounds.
-- GBA SP: The same as GBA.
-- GB Micro: Correct boot ROM animation, with sound. Nintendo logo is white (GBC
-  CPU reads 0s?).
-- DS: Doesn't work at all. Black screen. I suppose it hangs in the infinite loop
-  at the end of the code.
+- GBA: It works.
+- GBA SP: It works.
+- GB Micro: Correct boot ROM animation, with sound. Nintendo logo is white,
+  which means the GBC CPU is reading zeroes from the cart instead of data.
+- DS: It doesn't work at all. Black screen. I suppose it hangs in the infinite
+  loop at the end of the code.
+- GB Player: It works.
 
 It seems that the GB Micro in GBC mode can't read anything from the cart. I have
 to do more tests, but I've tried a cartridge that runs at 3.3V and the GB Micro
 doesn't load garbage in the Nintendo logo like the real GBC or MGB.
 
-A video:
-
-https://www.youtube.com/watch?v=-SkR8SAdS9w
-
-Needs devkitPro. Compiled with:
-
-- devkitARM: Version 42
-- libgba: Version 20090222
+To build it, you need devkitPro.
 
 My website: www.skylyrac.net/
 

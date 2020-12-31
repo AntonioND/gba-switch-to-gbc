@@ -32,6 +32,7 @@ CFLAGS	:=	-g -Wall -save-temps -O3\
 		-mcpu=arm7tdmi -mtune=arm7tdmi\
  		-fomit-frame-pointer\
 		-ffast-math \
+		-fno-tree-loop-distribute-patterns \
 		$(ARCH)
 
 CFLAGS	+=	$(INCLUDE)
