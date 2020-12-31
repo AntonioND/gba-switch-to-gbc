@@ -46,6 +46,16 @@ ALWAYS_INLINE void SWI_CpuSet(const void *src, void *dst, uint32_t len_mode)
     );
 }
 
+// BSS is by default in IWRAM
+uint16_t GBC_DISPCNT_VALUE;
+uint16_t EFFECTS;
+
+#define E_GREENSWAP                 (1 << 0)
+#define E_MOVE_SCREEN               (1 << 1)
+#define E_DISTORT_SCREEN            (1 << 2)
+#define E_MOSAIC                    (1 << 3)
+#define E_ROTATE_SCREEN             (1 << 4)
+
 IWRAM_CODE void prepare_registers(void)
 {
     // Reset all I/O to default values
@@ -120,14 +130,12 @@ IWRAM_CODE void switch2gbc(void)
 
     // Extra: Things that actually work!!! :D
 
-    int keys = ~REG_KEYINPUT;
-
-    if (keys & KEY_B)
+    if (EFFECTS & E_GREENSWAP)
     {
         *((u16*)0x04000002) = 1; // GREENSWAP
     }
 
-    if (keys & KEY_UP)
+    if (EFFECTS & E_MOVE_SCREEN)
     {
         REG_BG2X = 0xFFFFF000; // -16.0
         REG_BG2Y = 0xFFFFFC00; // -4.0 - Change screen position
@@ -136,7 +144,7 @@ IWRAM_CODE void switch2gbc(void)
     // It is strange, when pressing L to stretch the screen, it seems that BG2 affine transformation is ignored.
     // When pressing R again, the affine transformation is applied again.
 
-    if (keys & KEY_DOWN)
+    if (EFFECTS & E_DISTORT_SCREEN)
     {
         REG_BG2PA = 0x0180; // Change screen size and shape
         REG_BG2PB = 0x0010;
@@ -147,16 +155,17 @@ IWRAM_CODE void switch2gbc(void)
         //REG_BG2PB = 0x0010;
     }
 
-    if (keys & KEY_RIGHT)
+    if (EFFECTS & E_MOSAIC)
     {
         REG_BG2CNT |= BIT(6); // mosaic
         REG_MOSAIC = 0x0011;
     }
 
-    if (keys & KEY_R) // Rotate 90º :P
+    if (EFFECTS & E_ROTATE_SCREEN)
     {
-        REG_BG2X = 0<<8;
-        REG_BG2Y = 160<<8;
+        // Rotate 90º :P
+        REG_BG2X = 0 << 8;
+        REG_BG2Y = 160 << 8;
 
         REG_BG2PA = 0x0000;
         REG_BG2PB = 0x0100;
@@ -169,10 +178,6 @@ IWRAM_CODE void switch2gbc(void)
 
     // Enter GBC mode
     // --------------
-
-// Define a variable in IWRAM (IWRAM_DATA seems to be broken)
-#define GBC_DISPCNT_VALUE_ADDR      (IWRAM + (32 * 1024) - (sizeof(uint16_t)))
-#define GBC_DISPCNT_VALUE           *(uint16_t *)GBC_DISPCNT_VALUE_ADDR
 
     // Write 0x0408 to DISPCNT = 0x0408: Mode 0, GBC mode enabled, BG2 enabled
     GBC_DISPCNT_VALUE = 0x0408;
@@ -192,6 +197,8 @@ IWRAM_CODE void delayed_switch2gbc(void)
 {
     irqEnable(IRQ_TIMER0);
 
+    iprintf("Swap cartridges now!\n");
+    iprintf("\n");
     iprintf("Waiting 5 seconds...\n");
 
     // Clocks per second = 16777216 = 16 * 1024 * 1024
@@ -222,25 +229,43 @@ int main(void)
     irqEnable(IRQ_VBLANK);
 
     consoleDemoInit();
-    iprintf("Press A to continue\n");
 
     while(1)
     {
         VBlankIntrWait();
-        int16_t keys = ~REG_KEYINPUT;
-        if (!(keys & KEY_A))
-            break;
-    }
 
-    while(1)
-    {
-        VBlankIntrWait();
-        int16_t keys = ~REG_KEYINPUT;
+        iprintf("\x1b[0;0H");
+
+        iprintf("Press A to continue\n");
+        iprintf("\n");
+        iprintf("B: GREENSWAP: %d\n", (EFFECTS & E_GREENSWAP) != 0);
+        iprintf("UP: Move screen: %d\n", (EFFECTS & E_MOVE_SCREEN) != 0);
+        iprintf("RIGHT: Distort screen: %d\n", (EFFECTS & E_DISTORT_SCREEN) != 0);
+        iprintf("DOWN: Mosaic: %d\n", (EFFECTS & E_MOSAIC) != 0);
+        iprintf("LEFT: Rotate screen: %d\n", (EFFECTS & E_ROTATE_SCREEN) != 0);
+
+        scanKeys();
+
+        uint16_t keys = keysDown();
+
+        if (keys & KEY_B)
+            EFFECTS ^= E_GREENSWAP;
+        if (keys & KEY_UP)
+            EFFECTS ^= E_MOVE_SCREEN;
+        if (keys & KEY_RIGHT)
+            EFFECTS ^= E_DISTORT_SCREEN;
+        if (keys & KEY_DOWN)
+            EFFECTS ^= E_MOSAIC;
+        if (keys & KEY_LEFT)
+            EFFECTS ^= E_ROTATE_SCREEN;
+
         if (keys & KEY_A)
             break;
     }
 
     irqDisable(IRQ_VBLANK);
+
+    iprintf("\n");
 
     delayed_switch2gbc();
 
