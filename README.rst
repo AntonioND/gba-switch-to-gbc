@@ -17,14 +17,18 @@ It can even modify some other registers to change the GBC screen! It can apply
 an affine transformation, or apply mossaic effect... There are some things to
 test in the code.
 
+Note that the "stretch screen" mode you enable by pressing L seems to bypass all
+the transformation registers, but effects like mosaic and greenswap are still
+applied in stretch mode.
+
 Note that, as soon as a GBC cartridge is inserted in the GBA, EWRAM can't be
 used. This means the function that switches to GBC mode (and any function that
 is used to wait before switching) need to be placed in IWRAM, as well as any
 variable used by the functions.
 
-Tested on GB Micro. Should work in GBA, GBA SP, GB Micro, but NOT in DS (If I
-remember correctly, the ARM7 is different, GBA mode in DS is just a
-compatibility mode).
+Should work in GBA, GBA SP, GB Micro, but NOT in DS. If I remember correctly,
+the ARM7 is different in NDS. GBA mode in DS is just a compatibility mode, but
+in GBA, GBA SP and GB Micro the SoC includes the GBC CPU as well.
 
 The results are:
 
@@ -43,6 +47,14 @@ doesn't load garbage in the Nintendo logo like the real GBC or MGB.
 To build it, you need devkitPro.
 
 My website: www.skylyrac.net/
+
+Thanks to:
+
+- Dwedit, for the original ROM that tried to enter GBC mode:
+
+  https://www.dwedit.org/dwedit_board/viewtopic.php?id=339
+
+- Extrems, for discovering that the code needs to be in IWRAM to actually work.
 
 GBATEK information
 ------------------
