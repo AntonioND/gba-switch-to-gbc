@@ -7,6 +7,10 @@ The source code can be found here:
 
 https://github.com/AntonioND/gba-switch-to-gbc
 
+A video that demonstrates the code is here:
+
+https://www.youtube.com/watch?v=pcIQQPOkBGI
+
 I dissasembled the GBA BIOS and looked for the instruction that checks
 ``DISPCNT`` bit 15 (at address ``0x00001958``). If a GBC cart is detected (
 impossible in real hardware) a subroutine is called. Most of it is just a screen
@@ -26,7 +30,7 @@ used. This means the function that switches to GBC mode (and any function that
 is used to wait before switching) need to be placed in IWRAM, as well as any
 variable used by the functions.
 
-Should work in GBA, GBA SP, GB Micro, but NOT in DS. If I remember correctly,
+It should work in GBA, GBA SP, GB Micro, but NOT in DS. If I remember correctly,
 the ARM7 is different in NDS. GBA mode in DS is just a compatibility mode, but
 in GBA, GBA SP and GB Micro the SoC includes the GBC CPU as well.
 
